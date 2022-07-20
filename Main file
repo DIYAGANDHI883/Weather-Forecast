@@ -1,0 +1,108 @@
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import font
+from PIL import Image, ImageTk
+import json
+import requests
+import bs4 
+
+def get_weather():
+    city=box1.get()
+    url="https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid=33526638d4fe5241055609c5e09eb7fa"
+    html=requests.get(url) #grabs the content from url
+    soup=bs4.BeautifulSoup(html.text,"html.parser") #create a soup obejct that contains parsed content
+    weather=json.loads(soup.text)
+    temp=round(weather["main"]["feels_like"]-273)
+
+    humid=weather["main"]["humidity"]
+
+    wind=round(weather["wind"]["speed"]*3.6,2)
+
+    if "rain" not in weather.keys():
+        rain=0
+    else:
+        rain=weather["rain"]["1h"]*100
+    weather_type=weather["weather"][0]["description"]
+    text1.set(str(temp))
+    text2.set(str(humid))
+    text3.set(str(wind))
+    text4.set(weather_type.capitalize())
+
+    #if "overcast" in weather_type:
+
+    #elif "haze" in weather_type:
+
+    print(rain)
+
+
+
+
+app = tk.Tk()
+app.title("Weather")
+app.geometry("600x600")
+app.resizable(False,False)
+label1=tk.Label(text="Weather Forecast",font=("Ariel",25))
+label1.place(x=150,y=10)
+box1=tk.Entry(app,font=("Ariel",20),bg="#ccc")
+box1.focus_set()
+box1.place(x=140,y=100)
+
+
+img=Image.open("search-interface-symbol.png")
+resized_img=img.resize((30,30))
+icon= ImageTk.PhotoImage(resized_img)
+search=tk.Button(image=icon,command=get_weather)
+search.place(x=440,y=100)
+logo=Image.open("Temp.png")
+img= ImageTk.PhotoImage(logo)
+label1=tk.Label(image=img)
+
+label1.place(x=80,y=200)
+label1=tk.Label(text="Temp",font=("Ariel",15))
+label1.place(x=85,y=250)
+log=Image.open("clo.png")
+im= ImageTk.PhotoImage(log)
+label2=tk.Label(image=im)
+label2.place(x=270,y=200)
+label1=tk.Label(text="Humid",font=("Ariel",15))
+label1.place(x=270,y=250)
+lo=Image.open("wind.png")
+imag= ImageTk.PhotoImage(lo)
+label2=tk.Label(image=imag)
+label2.place(x=450,y=200)
+label1=tk.Label(text="Wind",font=("Ariel",15))
+label1.place(x=450,y=250)
+
+label1=tk.Label(text="Made by Diya Gandhi",font=("Ariel",10))
+label1.place(x=230,y=550)
+logos=Image.open("insta.png")
+imagee= ImageTk.PhotoImage(logos)
+label2=tk.Label(image=imagee)
+label2.place(x=270,y=570)
+
+logoss=Image.open("link.png")
+imageee= ImageTk.PhotoImage(logoss)
+label2=tk.Label(image=imageee)
+label2.place(x=300,y=570)
+#https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=33526638d4fe5241055609c5e09eb7fa
+#33526638d4fe5241055609c5e09eb7fa
+text1=tk.StringVar()
+text2=tk.StringVar()
+text3=tk.StringVar()
+text4=tk.StringVar()
+text1.set("")
+text2.set("")
+text3.set("")
+text4.set("")
+temperature=tk.Label(app,textvariable=text1,font=("Ariel",20))
+temperature.place(x=90,y=280)
+humidity=tk.Label(app,textvariable=text2,font=("Ariel",20))
+humidity.place(x=280,y=280)
+wind=tk.Label(app,textvariable=text3,font=("Ariel",20))
+wind.place(x=460,y=280)
+description=tk.Label(app,textvariable=text4,font=("Ariel",25))
+description.place(x=200,y=400)
+
+
+
+app.mainloop()
